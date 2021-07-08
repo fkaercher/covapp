@@ -32,6 +32,30 @@ It is based on a JavaScript software stack and uses the following technologies:
 
 ## Installation and development
 
+```sh
+git clone https://github.com/fkaercher/covapp
+> Cloning into `covapp`...
+> remote: Counting objects: 10, done.
+> remote: Compressing objects: 100% (8/8), done.
+> remove: Total 10 (delta 1), reused 10 (delta 1)
+> Unpacking objects: 100% (10/10), done.
+```
+
+Navigate into the new directory and install dependencies.
+
+```sh
+cd covapp
+npm ci
+```
+
+Then use `npm start` to start a local webserver at `localhost:3333`
+
+Go to the `backend` folder and adapt the `.env` configuration file for authentication with OAuth2
+
+Next run `npm i` to install the dependencies.
+
+Then use `npm run start` to start a local backend server at `localhost:3000`
+
 To get further information on how to set up and deploy your custom CovApp application, see the [development documentation](./docs/DEVELOPMENT.md).
 
 ## Customization
@@ -48,25 +72,14 @@ The CovApp provides the following customization options:
 - change the application logo
 
 To learn more about these options, see the [customization documentation](./docs/CUSTOMIZATION.md).
+### Setting up with FHIR
+
+In the configuration file there is an option to set an URL for a FHIR-endpoint as well as for authenticfication. If nothing is set no FHIR will be used.
 
 ### Questionnaire answers in FHIR format
 
 In addition to the XML representation of the questionnaire answers that is stored in the QR code, there is the possibility to generate a [FHIR R4](http://hl7.org/fhir/R4/) representation. You find documentation for the FHIR version of the questionnaire and its resources on [Simplifier.net](https://simplifier.net/guide/Covid-19Pre-TestPatientAssessment/Home).
 In the `src/global/fhir` folder, you find a module that lets you create a [FHIR R4 QuestionnaireResponse](http://hl7.org/fhir/R4/questionnaireresponse.html) resource which contains the answers.
-
-To generate the FHIR format, add the following code to the `src/components/qr-code/qr-code.tsx` file:
-
-```typescript
-import { createFHIRQuestionnaireResponse } from '../../global/fhir';
-
-createFHIR = () => {
-  const valuePairs = this.generateValuePairs(this.answers);
-  const fhir = createFHIRQuestionnaireResponse(valuePairs, this.language);
-  return fhir;
-};
-```
-
-Note: Since you’re changing the code outside of the general customization process, this might bring merge conflicts for future app updates.
 
 ## Support and contributing
 
