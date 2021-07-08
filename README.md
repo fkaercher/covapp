@@ -50,7 +50,9 @@ npm ci
 
 Then use `npm start` to start a local webserver at `localhost:3333`
 
-Go to the `backend` folder and adapt the `.env` configuration file for authentication with OAuth2
+#### Backend
+
+Go to the `backend` directory and adapt the `.env` configuration file for authentication with OAuth2
 
 Next run `npm i` to install the dependencies.
 
