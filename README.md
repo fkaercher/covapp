@@ -32,6 +32,30 @@ It is based on a JavaScript software stack and uses the following technologies:
 
 ## Installation and development
 
+```sh
+git clone https://github.com/fkaercher/covapp
+> Cloning into `covapp`...
+> remote: Counting objects: 10, done.
+> remote: Compressing objects: 100% (8/8), done.
+> remove: Total 10 (delta 1), reused 10 (delta 1)
+> Unpacking objects: 100% (10/10), done.
+```
+
+Navigate into the new directory and install dependencies.
+
+```sh
+cd covapp
+npm ci
+```
+
+Then use `npm start` to start a local webserver at `localhost:3333`
+
+Go to the `backend` folder and adapt the `.env` configuration file for authentication with OAuth2
+
+Next run `npm i` to install the dependencies.
+
+Then use `npm run start` to start a local backend server at `localhost:3000`
+
 To get further information on how to set up and deploy your custom CovApp application, see the [development documentation](./docs/DEVELOPMENT.md).
 
 ## Customization
@@ -51,9 +75,6 @@ To learn more about these options, see the [customization documentation](./docs/
 ### Setting up with FHIR
 
 In the configuration file there is an option to set an URL for a FHIR-endpoint as well as for authenticfication. If nothing is set no FHIR will be used.
-
-
-### Authentification
 
 ### Questionnaire answers in FHIR format
 
