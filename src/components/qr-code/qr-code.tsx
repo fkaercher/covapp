@@ -9,6 +9,7 @@ import { XML_ORDER, QUESTION } from '../../global/questions';
 import i18next from '../../global/utils/i18n';
 import { trackEvent, TRACKING_EVENTS } from '../../global/utils/track';
 import { Answers } from '../views/questionnaire/questionnaire';
+import { createFHIRQuestionnaireResponse } from '../../global/fhir/response';
 
 import { generateValuePairs, KeyValue } from './utils';
 
@@ -20,6 +21,7 @@ export class QRCode {
   @Prop() answers: any = {};
   @Prop() resultCase: number = 5;
   @State() language: string;
+  @Prop() fhirResponse: string;
 
   @Listen('changedLanguage', {
     target: 'window',
@@ -75,44 +77,54 @@ export class QRCode {
     return `<PATIENT>${postalCode}${resultCase}</PATIENT>`;
   };
 
+  createFHIR = () => {
+    console.log("test test");
+    const valuePairs = generateValuePairs(this.answers);
+    console.log(valuePairs);
+    const fhir = createFHIRQuestionnaireResponse(valuePairs, this.language);
+    return fhir;
+  };
+
   sendXMLData = async () => {
-    fetch(PANDEMIC_TRACKING_URL, {
+    const response = await fetch(PANDEMIC_TRACKING_URL, {
       method: 'POST',
       mode: 'cors',
-      cache: 'no-cache',
       headers: {
         'Content-Type': 'application/json',
       },
-      redirect: 'follow',
-      referrer: 'no-referrer',
-      body: JSON.stringify({
-        postalCode: this.answers[QUESTION.POSTAL_CODE],
-        riskCase: this.resultCase,
-      }),
+      body: JSON.stringify(this.createFHIR()),
     })
-      .then(response => {
-        if (response.ok) {
-          localStorage.setItem(LOCAL_STORAGE_KEYS.DATA_SENT, 'true');
-          trackEvent([...TRACKING_EVENTS.DATA_DONATION_SENT, '1']);
-        } else {
-          trackEvent([...TRACKING_EVENTS.DATA_DONATION_SENT, '0']);
-        }
-      })
-      .catch(error => {
-        console.log(error);
-      });
+    const responseText = await response.text();
+
+    if (response.ok) {
+      localStorage.setItem(LOCAL_STORAGE_KEYS.DATA_SENT, 'true');
+      trackEvent([...TRACKING_EVENTS.DATA_DONATION_SENT, '1']);
+      return JSON.parse(responseText);
+    } else {
+      trackEvent([...TRACKING_EVENTS.DATA_DONATION_SENT, '0']);
+      return responseText;
+    }
   };
 
   componentWillLoad = () => {
     const dataSent = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.DATA_SENT));
-    if (
+    /*if (
       PANDEMIC_TRACKING_IS_ENABLED &&
       !dataSent &&
       this.answers[QUESTION.DATA_DONATION] === '0'
     ) {
-      this.sendXMLData();
-    }
+    }*/
   };
+
+  private handleClick = () => {
+    this.fhirResponse = i18next.t('summery_donate_waiting');
+    this.sendXMLData().then(response => {
+      this.fhirResponse = i18next.t('summery_donate_answer') + ' ' + response.id;
+    }).catch(error => {
+      console.error(error);
+      this.fhirResponse = i18next.t('summery_donate_error');
+    });
+  }
 
   render() {
     const { generateCode, answers } = this;
@@ -128,6 +140,16 @@ export class QRCode {
             alt="QR code generated based on the provided answers"
           />
         </div>
+        <h3>{i18next.t('summery_donate_headline')}</h3>
+        <d4l-button
+              type="button"
+              classes="button--block button--secondary "
+              text={i18next.t('summary_donate_button')}
+              onClick={this.handleClick}
+            />
+        <d4l-alert type="green">
+          {this.fhirResponse}
+        </d4l-alert>
       </div>
     );
   }

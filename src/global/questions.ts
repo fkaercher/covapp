@@ -273,7 +273,7 @@ export const QUESTIONS: Question[] = [
     text: 'q_X1_text',
     options: ['q_X1_option0', 'q_X1_option1'],
     inputType: 'radio',
-    guard: new BoolCondition(PANDEMIC_TRACKING_IS_ENABLED),
+    guard: new BoolCondition(false),
   },
   {
     id: QUESTION.POSTAL_CODE,
@@ -282,7 +282,7 @@ export const QUESTIONS: Question[] = [
     text: 'q_V1_text',
     inputType: 'postal',
     guard: new Conjunction([
-      new BoolCondition(PANDEMIC_TRACKING_IS_ENABLED),
+      new BoolCondition(false),
       new RadioAnswerCondition('X1', ['0']),
     ]),
   },

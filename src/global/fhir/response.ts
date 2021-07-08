@@ -1,4 +1,4 @@
-import { CATEGORIES_VALUESET } from '.';
+import { CATEGORIES_VALUESET } from '../fhir/valuesets';
 import { KeyValue } from '../../components/qr-code/utils';
 import { QUESTIONNAIRE_VERSION } from '../constants';
 import { LANGUAGE_RESOURCES } from '../custom';
@@ -6,8 +6,9 @@ import { QUESTION } from '../questions';
 import {
   FHIRQuestionnaireItem,
   FHIRQuestionnaireResponse,
-  FHIRValueCoding,
-  FHIRValueDate,
+  FHIRResponseItem,
+  FHIRAnswerValueCoding,
+  FHIRAnswerValueDate,
 } from './types';
 import {
   AGE_VALUESET,
@@ -26,7 +27,7 @@ export const createFHIRQuestionnaireResponse = (
   const version = QUESTIONNAIRE_VERSION.split('').join('.');
   let response: FHIRQuestionnaireResponse = {
     resourceType: 'QuestionnaireResponse',
-    language: language,
+    language: "de",
     questionnaire: `http://fhir.data4life.care/covid-19/r4/Questionnaire/covid19-recommendation|${version}`,
     authored: new Date().toISOString(),
     status: 'completed',
@@ -39,7 +40,7 @@ export const createFHIRQuestionnaireResponse = (
 const createItemsPerCategory = (
   answers: KeyValue[],
   language: string
-): FHIRQuestionnaireItem[] => {
+): FHIRResponseItem[] => {
   let items = [];
 
   const answersByCategory = groupByCategory(answers);
@@ -95,11 +96,16 @@ export const createItemCategory = (
 export const createItem = (
   answer: KeyValue,
   language: string
-): FHIRQuestionnaireItem => {
-  let answerItem: FHIRValueCoding | FHIRValueDate;
+): FHIRResponseItem => {
+  let answerItem: FHIRAnswerValueCoding | FHIRAnswerValueDate;
+  console.log("key :"+answer.key);
   if (DATE_ANSWERS.indexOf(answer.key) > -1) {
+    console.log("valueDate: "+answer.value);
+    let year = answer.value.substr(0,4);
+    let month = answer.value.substr(4,2);
+    let day = answer.value.substr(6,2);
     answerItem = {
-      valueDate: answer.value.split('.').join('-'),
+      valueDate: year+"-"+month+"-"+day,
     };
   } else {
     answerItem = {
@@ -109,10 +115,10 @@ export const createItem = (
       },
     };
   }
-
-  let item: FHIRQuestionnaireItem = {
+  console.log("result: "+answerItem);
+  let item: FHIRResponseItem = {
     linkId: answer.key,
-    text: LANGUAGE_RESOURCES[language].translation[`q_${answer.key}_text`],
+    text: LANGUAGE_RESOURCES["de"].translation[`q_${answer.key}_text`],
     answer: [answerItem],
   };
 
@@ -139,6 +145,7 @@ const getCodingSystem = (answer: KeyValue) => {
 };
 
 const getCode = (answer: KeyValue): string => {
+  console.log(answer.key + " " + answer.value);
   switch (answer.key) {
     case QUESTION.AGE:
       return AGE_VALUESET[answer.value];

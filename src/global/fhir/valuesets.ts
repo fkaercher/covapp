@@ -42,7 +42,8 @@ export const PREGNANCY_VALUESET = {
 export const YES_NO_VALUESET = {
   '0': 'LA33-6',
   '1': 'LA32-8',
-  '2': 'LA12688-0',
+  '2': 'LA32-8',
+//  '2': 'LA12688-0',
 };
 
 export const CATEGORIES_VALUESET = {

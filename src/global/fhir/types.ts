@@ -38,10 +38,10 @@ export type FHIRValueSet = {
 
 export type FHIRQuestionnaireItem = {
   linkId: string;
-  type: FHIRQuestionnaireItemType;
+  type?: FHIRQuestionnaireItemType;
   text: string;
-  item?: FHIRQuestionnaireItem[];
-  answerValueSet?: string;
+  item?: FHIRResponseItem[];
+  answer?: string;
   required?: boolean;
   options?: { reference: string };
   initialCoding?: FHIRCoding;

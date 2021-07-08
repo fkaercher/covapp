@@ -94,7 +94,7 @@ const createItems = (
     let answer: FHIRAnswerValue[] = null;
     let childItems: FHIRResponseItem[] = null;
 
-    if (questionItem.type === 'choice' && questionItem.answerValueSet) {
+    if (questionItem.type === 'choice' && questionItem.answer) {
       const valueSet = getValueSet(valueSets, questionItem);
 
       if (valueSet === undefined) {
@@ -208,7 +208,7 @@ const checkCondition = (
 const getValueSet = (
   valueSets: { [key: string]: FHIRValueSet },
   questionItem: FHIRQuestionnaireItem
-) => valueSets[questionItem.answerValueSet.replace('#', '')];
+) => valueSets[questionItem.answer.replace('#', '')];
 
 const getAnswer = (
   id: string,
